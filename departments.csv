@@ -10,7 +10,7 @@ DEPARTMENT_ID,DEPARTMENT_NAME,MANAGER_ID,LOCATION_ID
 90,Executive,100,1700
 100,Finance,108,1700
 110,Accounting,205,1700
-120,Treasury, - ,1700
+120,Treasury,200,1700
 130,Corporate Tax, - ,1700
 140,Control And Credit, - ,1700
 150,Shareholder Services, - ,1700

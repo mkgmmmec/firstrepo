@@ -1,0 +1,38 @@
+{
+	"name": "pl_filter",
+	"properties": {
+		"activities": [
+			{
+				"name": "Filter1",
+				"type": "Filter",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@pipeline().parameters.ListOfName",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@contains(item(),'M')",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"ListOfName": {
+				"type": "array",
+				"defaultValue": [
+					"Manish",
+					"Mike",
+					"Mukesh",
+					"Rakesh",
+					"Rajesh"
+				]
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-05-04T08:56:13Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

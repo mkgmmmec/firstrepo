@@ -1,0 +1,37 @@
+{
+	"name": "pl_emailalert",
+	"properties": {
+		"activities": [
+			{
+				"name": "Web1",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"url": "https://prod-36.uksouth.logic.azure.com:443/workflows/b69e00740f784030af47bd828468a2b7/triggers/When_a_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_a_HTTP_request_is_received%2Frun&sv=1.0&sig=k9pqLyE27BAvmzfPLV7yCVihgsyUMRTqs-E5WlzhSZY",
+					"body": {
+						"value": "@concat('\n{\n\"to\":\"',variables('to'),'\",\n\"subject\":\"This is email alert for failed jobs\",\n\"body\":\"This is inform you that job is failed\"\n\n}')",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"variables": {
+			"to": {
+				"type": "String",
+				"defaultValue": "swetarauniyar114@gmail.com"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-05-05T21:28:28Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

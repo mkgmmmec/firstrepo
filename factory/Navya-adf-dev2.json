@@ -1,0 +1,9 @@
+{
+	"name": "Navya-adf-dev2",
+	"location": "uksouth",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "05816808-dae9-45ec-aab8-2d7e5d9ae64d",
+		"tenantId": "161b1d26-1f88-4f05-8ae4-533b55d47143"
+	}
+}

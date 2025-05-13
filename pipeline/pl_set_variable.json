@@ -1,0 +1,79 @@
+{
+	"name": "pl_set_variable",
+	"properties": {
+		"activities": [
+			{
+				"name": "Set_length",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "v_length",
+					"value": "10"
+				}
+			},
+			{
+				"name": "Set_width",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "v_width",
+					"value": "5"
+				}
+			},
+			{
+				"name": "Cal Area",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set_length",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Set_width",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "v_area",
+					"value": {
+						"value": "@string(mul(int(variables('v_length')),int(variables('v_width'))))",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"variables": {
+			"v_length": {
+				"type": "String"
+			},
+			"v_width": {
+				"type": "String"
+			},
+			"v_area": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-05-04T06:20:15Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

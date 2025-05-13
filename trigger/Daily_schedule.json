@@ -1,0 +1,18 @@
+{
+	"name": "Daily_schedule",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Stopped",
+		"pipelines": [],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Minute",
+				"interval": 15,
+				"startTime": "2025-05-04T04:26:00",
+				"endTime": "2025-05-06T04:26:00",
+				"timeZone": "GMT Standard Time"
+			}
+		}
+	}
+}

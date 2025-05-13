@@ -1,0 +1,161 @@
+{
+	"name": "SCD2TEST",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "SourceCustomer",
+						"type": "DatasetReference"
+					},
+					"name": "scust"
+				},
+				{
+					"dataset": {
+						"referenceName": "TargetCustomer",
+						"type": "DatasetReference"
+					},
+					"name": "tcust"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "TargetCustomer",
+						"type": "DatasetReference"
+					},
+					"name": "insernewtarget"
+				},
+				{
+					"dataset": {
+						"referenceName": "TargetCustomer",
+						"type": "DatasetReference"
+					},
+					"name": "updateoldrecord"
+				}
+			],
+			"transformations": [
+				{
+					"name": "sourcehash"
+				},
+				{
+					"name": "Targethash"
+				},
+				{
+					"name": "exists1",
+					"description": "Filtering rows from undebfined which are not matching in undefined based on columns 'sourcehash@hash'"
+				},
+				{
+					"name": "activeflag"
+				},
+				{
+					"name": "exists2"
+				},
+				{
+					"name": "exists3"
+				},
+				{
+					"name": "updateinactive"
+				},
+				{
+					"name": "alterRow1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          CustomerID as integer,",
+				"          FirstName as string,",
+				"          CompanyName as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> scust",
+				"source(output(",
+				"          SurrogateKey as long,",
+				"          CustomerID as integer,",
+				"          FirstName as string,",
+				"          CompanyName as string,",
+				"          start_date as timestamp,",
+				"          end_date as timestamp,",
+				"          active_flag as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> tcust",
+				"scust derive(hash = md5(CustomerID,FirstName,CompanyName)) ~> sourcehash",
+				"tcust derive(hash = md5(CustomerID,FirstName,CompanyName)) ~> Targethash",
+				"sourcehash, Targethash exists(sourcehash@hash == Targethash@hash,",
+				"     negate:true,",
+				"     broadcast: 'auto')~> exists1",
+				"exists1 derive(active_flag = 1,",
+				"          start_date = currentTimestamp()) ~> activeflag",
+				"Targethash, sourcehash exists(tcust@CustomerID == scust@CustomerID,",
+				"     negate:false,",
+				"     broadcast: 'auto')~> exists2",
+				"exists2, sourcehash exists(Targethash@hash == sourcehash@hash,",
+				"     negate:true,",
+				"     broadcast: 'auto')~> exists3",
+				"exists3 derive(inactive_flag = 0,",
+				"          end_existing_row = currentTimestamp()) ~> updateinactive",
+				"updateinactive alterRow(updateIf(true())) ~> alterRow1",
+				"activeflag sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          SurrogateKey as long,",
+				"          CustomerID as integer,",
+				"          FirstName as string,",
+				"          CompanyName as string,",
+				"          start_date as timestamp,",
+				"          end_date as timestamp,",
+				"          active_flag as integer",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          CustomerID,",
+				"          FirstName,",
+				"          CompanyName,",
+				"          start_date,",
+				"          active_flag",
+				"     )) ~> insernewtarget",
+				"alterRow1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          SurrogateKey as long,",
+				"          CustomerID as integer,",
+				"          FirstName as string,",
+				"          CompanyName as string,",
+				"          start_date as timestamp,",
+				"          end_date as timestamp,",
+				"          active_flag as integer",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:false,",
+				"     updateable:true,",
+				"     upsertable:true,",
+				"     keys:['CustomerID','start_date'],",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          CustomerID,",
+				"          FirstName,",
+				"          CompanyName,",
+				"          start_date,",
+				"          end_date = end_existing_row,",
+				"          active_flag = inactive_flag",
+				"     )) ~> updateoldrecord"
+			]
+		}
+	}
+}
